@@ -41,6 +41,7 @@ def loan_repayment_case_study():
     # -- Build the individual calculation sheets. -- #
     for i, assumptions_dict in enumerate(LOAN_ASSUMPTIONS):
         sheet = model.addSheet("Loan #{}".format(i))
+        sheet.setStyle("calculation")
 
         # Start with defining the assumptions for the sheet
         mapper = {
@@ -80,7 +81,8 @@ def loan_repayment_case_study():
 
 
     # -- Create a dashboard page -- #
-    dashboard = model.addDashboard("Summary")
+    dashboard = model.addSheet("Summary")
+    dashboard.setStyle("dashboard")
 
     section_table = dashboard.addSection()
     section_table.addMetricTable(
