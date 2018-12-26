@@ -1,13 +1,9 @@
 """
-Adds the assumptions object, which is used on the assumptions sheet and in
-assumption sections for calculation sheets.
+Implements the logic for the line items.
 """
 
-from . import section
-
-
-class _AssumptionOperators:
-    """Implements the operator logic for assumptions."""
+class _LineItemOperators:
+    """Contains the logic for the line item operators."""
 
     ## IMPLEMENT THE SIMPLE OPERATORS ##
     def __add__(self, other):
@@ -56,32 +52,38 @@ class _AssumptionOperators:
         return self  # WIP!
 
 
-class Assumption(_AssumptionOperators):
-    """Class that handles the assumptions defined."""
+class LineItem(_LineItemOperators):
+    """Creates a new line item - the most important part of any model."""
 
-    def __init__(self, starting_value):
-        """Stores the passed values internally into the class."""
-        self.value = starting_value
-        return
+    def equals(self, formula_object):
+        """
+        Adds a new line item into the spreadsheet.
 
+        The important concept to grasp with this method is that it does _not_
+        take in a function. Rather, it takes in a special PyFinancials object
+        which is then compiled down into the excel formulas.
+        """
+        return self
 
-class AssumptionsSection(section.Section):
-    """Handles the user creating assumptions in the model."""
+    def dt(self, offset_amount):
+        """
+        Offsets a line item by a set amount.
 
-    def __init__(self):
-        """Builds the assumptions section."""
-        self._assumptions = {}
-        return
+        A typical example of where this function would be used is in a corkscrew
+        formula such as a end-of-month to start-of-month carry forward or a
+        month-on-month difference in an equation.
 
-    def __getitem__(self, key):
-        """Access any defined assumptions from the object."""
-        return self._assumptions[key]
+        Positive values indicate a forward-looking offset whereas negative
+        values indicate a backward-looking offset.
+        """
+        return self
 
-    def __setitem__(self, key, value):
-        """Access any defined assumptions from the object."""
-        self._assumptions[key].value = value
-        return
+    @property
+    def next(self):
+        """Handy shorthand property to select the next month's values."""
+        return self.dt(+1)
 
-    def addAssumption(self, pretty_name, initial_value=0):
-        """Creates an assumptions section."""
-        self._assumptions[pretty_name] = Assumption(initial_value)
+    @property
+    def previous(self):
+        """Handy shorthand property to select the previous month's values."""
+        return self.dt(-1)

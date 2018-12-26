@@ -6,4 +6,5 @@ from . import section
 
 class Dashboard(section.Section):
     """Creates the dashboard section."""
-    raise NotImplementedError("We can't do anything cool yet...")
+    # raise NotImplementedError("We can't do anything cool yet...")
+    pass
