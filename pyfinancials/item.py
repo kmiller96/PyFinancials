@@ -2,6 +2,8 @@
 Implements the logic for the line items.
 """
 
+import openpyxl as pyxl
+
 class _LineItemOperators:
     """Contains the logic for the line item operators."""
 

@@ -2,6 +2,7 @@
 Creates, stores and handles the individual sections.
 """
 
+import openpyxl as pyxl
 from . import item
 
 class Section:

@@ -6,6 +6,7 @@ example functionality. There are (read: soon will be) multiple user stories
 built as individual execution runs so you can see some example code in action.
 """
 
+import openpyxl as pyxl
 import pyfinancials as pf
 
 def loan_repayment_case_study():

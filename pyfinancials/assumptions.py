@@ -3,6 +3,7 @@ Adds the assumptions object, which is used on the assumptions sheet and in
 assumption sections for calculation sheets.
 """
 
+import openpyxl as pyxl
 from . import section
 
 

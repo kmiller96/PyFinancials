@@ -3,6 +3,7 @@ The classes that handle the sheets in a workbook. Does majority of the heavy
 lifting.
 """
 
+import openpyxl as pyxl
 from . import assumptions, section
 
 class Worksheet:
