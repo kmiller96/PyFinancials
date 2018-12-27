@@ -6,8 +6,8 @@ example functionality. There are (read: soon will be) multiple user stories
 built as individual execution runs so you can see some example code in action.
 """
 
+import openpyxl as pyxl
 import pyfinancials as pf
-
 
 def loan_repayment_case_study():
     """Contains the code that runs the first case study."""
@@ -41,6 +41,7 @@ def loan_repayment_case_study():
     # -- Build the individual calculation sheets. -- #
     for i, assumptions_dict in enumerate(LOAN_ASSUMPTIONS):
         sheet = model.addSheet("Loan #{}".format(i))
+        sheet.setStyle("calculation")
 
         # Start with defining the assumptions for the sheet
         mapper = {
@@ -59,16 +60,16 @@ def loan_repayment_case_study():
 
         # Build the "engine" of the model.
         loan_calc   = sheet.addSection()
-        som_balance = calc_section.addLine("Start of Month Balance")
-        interest    = calc_section.addLine("Interest")
-        repayment   = calc_section.addLine("Repayment")
-        eom_balance = calc_section.addLine("End of Month Balance")
+        som_balance = loan_calc.addLine("Start of Month Balance")
+        interest    = loan_calc.addLine("Interest")
+        repayment   = loan_calc.addLine("Repayment")
+        eom_balance = loan_calc.addLine("End of Month Balance")
 
-        som_balance.set(eom_balance.previous())
-        interest.set(som_balance * assumptions["Interest Rate (p.a)"])
-        repayment.set(repayment_metric)
-        eom_balance.set(
-            py.formulas.IF(
+        som_balance.equals(eom_balance.previous)
+        interest.equals(som_balance * assumptions["Interest Rate (p.a)"])
+        repayment.equals(repayment_metric)
+        eom_balance.equals(
+            pf.formulas.IF(
                 repayment < som_balance + interest,
                 som_balance + interest - repayment,
                 0
@@ -76,11 +77,12 @@ def loan_repayment_case_study():
         )
 
         # Add some styling
-        sheet.title("Loan Repayment Calculation #{0}".format(i))
+        sheet.title = "Loan Repayment Calculation #{0}".format(i)
 
 
     # -- Create a dashboard page -- #
-    dashboard = model.addDashboard("Summary")
+    dashboard = model.addSheet("Summary")
+    dashboard.setStyle("dashboard")
 
     section_table = dashboard.addSection()
     section_table.addMetricTable(
