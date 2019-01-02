@@ -1,88 +1,73 @@
 """
-Adds the assumptions object, which is used on the assumptions sheet and in
-assumption sections for calculation sheets.
+Contains the Assumption object and any other related logic.
 """
 
-import openpyxl as pyxl
-from . import section
+from . import virtualsheet, helpers
+from . import cell
 
 
-class _AssumptionOperators:
-    """Implements the operator logic for assumptions."""
+class Assumption:
+    """An individual assumption."""
 
-    ## IMPLEMENT THE SIMPLE OPERATORS ##
-    def __add__(self, other):
-        return self  # WIP!
-    def __sub__(self, other):
-        return self  # WIP!
-    def __mul__(self, other):
-        return self  # WIP!
-    def __floordiv__(self, other):
-        return self  # WIP!
-    def __div__(self, other):
-        return self  # WIP!
-    def __mod__(self, other):
-        return self  # WIP!
-    def __pow__(self, other):
-        return self  # WIP!
-
-    ## IMPLEMENT SELF-OPERATORS (+=, -=. etc) ##
-    def __iadd__(self, other):
-        return self  # WIP!
-    def __isub__(self, other):
-        return self  # WIP!
-    def __imul__(self, other):
-        return self  # WIP!
-    def __idiv__(self, other):
-        return self  # WIP!
-    def __ifloordiv__(self, other):
-        return self  # WIP!
-    def __imod__(self, other):
-        return self  # WIP!
-    def __ipow__(self, other):
-        return self  # WIP!
-
-    ## IMPLEMENT THE EQUALITY OPERATORS
-    def __eq__(self, other):
-        return self  # WIP!
-    def __ne__(self, other):
-        return self  # WIP!
-    def __lt__(self, other):
-        return self  # WIP!
-    def __gt__(self, other):
-        return self  # WIP!
-    def __le__(self, other):
-        return self  # WIP!
-    def __ge__(self, other):
-        return self  # WIP!
-
-
-class Assumption(_AssumptionOperators):
-    """Class that handles the assumptions defined."""
-
-    def __init__(self, starting_value):
-        """Stores the passed values internally into the class."""
-        self.value = starting_value
+    def __init__(self, name, value, periods):
+        """Stores the data about the assumption."""
+        self.name = name
+        self.value = value
+        self.cell = [cell.Cell()] * periods # HACK: Makes identical copies of the reference
         return
 
+    def equals(self, operation):
+        """Sets the assumption to be equal to the output of some operation."""
+        self.cell = operation
+        return self
 
-class AssumptionsSection(section.Section):
-    """Handles the user creating assumptions in the model."""
+    def __add__(self, other):
+        return [x+y for x,y in zip(self.cell, other.cell)]
+    def __sub__(self, other):
+        return [x-y for x,y in zip(self.cell, other.cell)]
+    def __mul__(self, other):
+        return [x*y for x,y in zip(self.cell, other.cell)]
+    def __floordiv__(self, other):
+        return [x//y for x,y in zip(self.cell, other.cell)]
+    def __truediv__(self, other):
+        return [x/y for x,y in zip(self.cell, other.cell)]
+    def __mod__(self, other):
+        return [x%y for x,y in zip(self.cell, other.cell)]
+    def __pow__(self, other):
+        return [x**y for x,y in zip(self.cell, other.cell)]
+
+
+class AssumptionsTable:
+    """Formats the assumptions into a nice-looking table."""
+    periods = 36  # HACK: Make a set number of periods while I think.
 
     def __init__(self):
-        """Builds the assumptions section."""
-        self._assumptions = {}
+        """Creates the assumptions storage."""
+        self.assumptions = []
         return
 
-    def __getitem__(self, key):
-        """Access any defined assumptions from the object."""
-        return self._assumptions[key]
+    def __str__(self):
+        """Builds the primary key string."""
+        return self.pk
 
-    def __setitem__(self, key, value):
-        """Access any defined assumptions from the object."""
-        self._assumptions[key].value = value
-        return
+    def addAssumption(self, name, initial_value=0):
+        """Creates an assumptions."""
+        assumpt = Assumption(
+            name=name,
+            value=initial_value,
+            periods=self.periods
+        )
+        self.assumptions.append(assumpt)
+        return assumpt
 
-    def addAssumption(self, pretty_name, initial_value=0):
-        """Creates an assumptions section."""
-        self._assumptions[pretty_name] = Assumption(initial_value)
+    def compile(self):
+        """Compiles the assumptions into a VirtualWorksheet."""
+        table = virtualsheet.VirtualWorksheet()
+        for i, assumpt in enumerate(self.assumptions):
+            c2r = helpers.coords2ref
+            table[c2r((i, 0))] = assumpt.name
+            # TODO: Add a method that does this remembering of pks automatically.
+            table[c2r((i, 1))] = f"={assumpt.value}"
+            table.pks[str(assumpt.cell[0].pk)] = c2r((i, 1))
+            # All of the cells have the same pk.
+        return table
