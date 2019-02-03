@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from .assumptions import *
 from .cell import *
 from .engine import *

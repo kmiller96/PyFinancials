@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Builds the VirtualWorksheet object - a core concept for PyFinancials.
 """

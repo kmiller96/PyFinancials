@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 A commonly used file. It contains the python wrappers for Excel.
 """

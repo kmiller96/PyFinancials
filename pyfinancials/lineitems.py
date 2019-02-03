@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Contains the logic for the model's line items.
 """
@@ -35,7 +37,7 @@ class LineItem:
         These missing entries have to be defined manually using the __setitem__
         method.
         """
-        return self  # TODO 
+        return self  # TODO
 
     @property
     def next(self):
