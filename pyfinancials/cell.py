@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Contains the code for individual cells.
+The `cell.py` module contains the logic of individual cells. Most cells are
+pretty dumb, holding only a UID and a value. They are however crucial components
+for the end compilation call.
 """
 
-import uuid
 from . import primarykey as pk
 from . import excel
 
 
 class Cell:
-    """Handles the logic for individual cells."""
+    """Handles the logic for individual cells.
+
+    Attributes:
+        pk (PrimaryKey): A UID for the cell.
+        value (optional): The current value of the cell.
+    """
 
     def __init__(self, value=0):
         self.pk = pk.PrimaryKey()
